@@ -6,13 +6,13 @@ from functools import lru_cache
 
 import pandas as pd
 
-_BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_RAW = os.path.join(os.path.dirname(os.path.abspath(__file__)), "raw")
 
-_MORTALITY_FILE = os.path.join(_BASE, "Anexo1.NoFetal2019_CE_15-03-23.csv")
-_CODES_FILE = os.path.join(_BASE, "Anexo2.CodigosDeMuerte_CE_15-03-23.csv")
-_DIVIPOLA_FILE = os.path.join(_BASE, "Divipola_CE_Hoja1.csv")
-_GEODIV_FILE = os.path.join(_BASE, "Divipola_CE_Hoja3.csv")
-_GEOJSON_FILE = os.path.join(_BASE, "Colombia.geo.json")
+_MORTALITY_FILE = os.path.join(_RAW, "Anexo1.NoFetal2019_CE_15-03-23.csv")
+_CODES_FILE = os.path.join(_RAW, "Anexo2.CodigosDeMuerte_CE_15-03-23.csv")
+_DIVIPOLA_FILE = os.path.join(_RAW, "Divipola_CE_Hoja1.csv")
+_GEODIV_FILE = os.path.join(_RAW, "Divipola_CE_Hoja3.csv")
+_GEOJSON_FILE = os.path.join(_RAW, "Colombia.geo.json")
 
 
 @lru_cache(maxsize=1)

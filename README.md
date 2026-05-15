@@ -24,20 +24,6 @@ python app.py
 # → http://localhost:8050
 ```
 
-## Despliegue en Render
-
-1. Push el repositorio a GitHub.
-2. Crea un nuevo **Web Service** en [render.com](https://render.com).
-3. Conecta el repositorio — Render detecta `render.yaml` automáticamente.
-4. Deploy.
-
-## Despliegue en Railway
-
-1. Push a GitHub.
-2. Crea proyecto en [railway.app](https://railway.app) → **Deploy from GitHub repo**.
-3. Railway detecta `Procfile` y ejecuta gunicorn.
-4. En *Variables*, agrega `PORT=8050` si es necesario (Railway lo inyecta automáticamente).
-
 ## Estructura del proyecto
 
 ```
@@ -46,7 +32,13 @@ analytics/
 ├── layout.py               # Ensamblaje del dashboard
 ├── data/
 │   ├── loader.py           # Carga y caché de CSVs
-│   └── processor.py        # Todas las agregaciones
+│   ├── processor.py        # Todas las agregaciones
+│   └── raw/                # Archivos de datos fuente
+│       ├── Anexo1.NoFetal2019_CE_15-03-23.csv
+│       ├── Anexo2.CodigosDeMuerte_CE_15-03-23.csv
+│       ├── Divipola_CE_Hoja1.csv
+│       ├── Divipola_CE_Hoja3.csv
+│       └── Colombia.geo.json
 ├── components/
 │   ├── map_chart.py
 │   ├── line_chart.py
@@ -54,7 +46,5 @@ analytics/
 │   ├── pie_chart.py
 │   ├── stacked_bar.py
 │   └── histogram.py
-├── requirements.txt
-├── Procfile                # Render / Railway / Heroku
-└── render.yaml             # Render blueprint
+└── requirements.txt
 ```
