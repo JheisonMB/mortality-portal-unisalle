@@ -4,10 +4,12 @@ import plotly.graph_objects as go
 from data.processor import deaths_by_sex_department
 
 _SEX_COLORS = {
-    "Masculino": "#1d3557",
-    "Femenino": "#e63946",
-    "Indeterminado": "#a8dadc",
+    "Masculino": "#654801",
+    "Femenino": "#FDBE21",
+    "Indeterminado": "#FEE19A",
 }
+
+_COLOR_DARK = "#332400"
 
 
 def stacked_bar_chart() -> go.Figure:
@@ -29,12 +31,16 @@ def stacked_bar_chart() -> go.Figure:
 
     fig.update_layout(
         barmode="stack",
-        title="Total de muertes por sexo en cada departamento — Colombia 2019",
+        title="Mortalidad por sexo y departamento",
         xaxis_title="Departamento",
-        yaxis_title="Total muertes",
+        yaxis_title="Total",
         xaxis_tickangle=-45,
         height=480,
         margin={"t": 60, "b": 140},
+        title_font={"size": 18, "color": _COLOR_DARK, "family": "Segoe UI"},
         legend_title="Sexo",
+        xaxis={"showgrid": False},
+        yaxis={"showgrid": True, "gridwidth": 1, "gridcolor": "rgba(51, 36, 0, 0.05)"},
+        plot_bgcolor="rgba(255, 245, 220, 0.3)",
     )
     return fig

@@ -9,13 +9,26 @@ from components.pie_chart import pie_chart
 from components.stacked_bar import stacked_bar_chart
 from data.processor import top10_causes
 
+# Ocre palette
+_COLOR_DARK = "#332400"
+_COLOR_DARKER = "#654801"
+_COLOR_MED = "#A27402"
+_COLOR_ACCENT = "#DE9F02"
+_COLOR_BRIGHT = "#FDBE21"
+_COLOR_LIGHT = "#FEECBD"
+_COLOR_LIGHTER = "#FEE19A"
+_COLOR_BG = "#FFF5DC"
+
 _CARD = {
-    "background": "#ffffff",
-    "borderRadius": "8px",
-    "boxShadow": "0 2px 6px rgba(0,0,0,.12)",
-    "padding": "16px",
+    "background": _COLOR_LIGHT,
+    "borderRadius": "12px",
+    "boxShadow": "0 4px 12px rgba(51, 36, 0, 0.1)",
+    "padding": "24px",
     "marginBottom": "24px",
+    "border": f"1px solid {_COLOR_LIGHTER}",
 }
+
+_FONT_FAMILY = '"Segoe UI", "Trebuchet MS", sans-serif'
 
 
 def _causes_table() -> dash_table.DataTable:
@@ -30,21 +43,26 @@ def _causes_table() -> dash_table.DataTable:
         ],
         data=df.to_dict("records"),
         style_header={
-            "backgroundColor": "#1d3557",
-            "color": "white",
-            "fontWeight": "bold",
+            "backgroundColor": _COLOR_DARKER,
+            "color": "#ffffff",
+            "fontWeight": "600",
             "textAlign": "center",
+            "fontFamily": _FONT_FAMILY,
+            "fontSize": "14px",
+            "borderBottom": f"2px solid {_COLOR_ACCENT}",
+            "padding": "12px",
         },
         style_cell={
             "textAlign": "left",
-            "padding": "8px 12px",
-            "fontFamily": "sans-serif",
+            "padding": "12px",
+            "fontFamily": _FONT_FAMILY,
             "fontSize": "13px",
             "whiteSpace": "normal",
             "height": "auto",
+            "color": _COLOR_DARK,
         },
         style_data_conditional=[
-            {"if": {"row_index": "odd"}, "backgroundColor": "#f1f3f5"}
+            {"if": {"row_index": "odd"}, "backgroundColor": _COLOR_LIGHTER}
         ],
         page_action="none",
     )
@@ -52,39 +70,73 @@ def _causes_table() -> dash_table.DataTable:
 
 def build_layout() -> html.Div:
     return html.Div(
-        style={"fontFamily": "sans-serif", "backgroundColor": "#f8f9fa", "padding": "24px"},
+        style={
+            "fontFamily": _FONT_FAMILY,
+            "backgroundColor": _COLOR_BG,
+            "padding": "32px 24px",
+            "minHeight": "100vh",
+        },
         children=[
             # Header
             html.Div(
                 style={
-                    "background": "linear-gradient(135deg, #1d3557 0%, #457b9d 100%)",
-                    "color": "white",
-                    "padding": "28px 32px",
-                    "borderRadius": "10px",
-                    "marginBottom": "28px",
+                    "background": f"linear-gradient(135deg, {_COLOR_DARK} 0%, {_COLOR_DARKER} 100%)",
+                    "color": "#ffffff",
+                    "padding": "40px 36px",
+                    "borderRadius": "16px",
+                    "marginBottom": "36px",
+                    "boxShadow": "0 8px 24px rgba(51, 36, 0, 0.15)",
                 },
                 children=[
                     html.H1(
-                        "Mortalidad en Colombia — 2019",
-                        style={"margin": "0 0 8px 0", "fontSize": "2rem"},
+                        "Mortalidad en Colombia",
+                        style={
+                            "margin": "0 0 12px 0",
+                            "fontSize": "2.4rem",
+                            "fontWeight": "700",
+                            "letterSpacing": "-0.5px",
+                        },
+                    ),
+                    html.H2(
+                        "Análisis de Estadísticas Vitales — 2019",
+                        style={
+                            "margin": "0 0 8px 0",
+                            "fontSize": "1rem",
+                            "fontWeight": "300",
+                            "color": _COLOR_BG,
+                        },
                     ),
                     html.P(
-                        "Análisis interactivo de datos de mortalidad no fetal. "
-                        "Fuente: DANE — Estadísticas Vitales.",
-                        style={"margin": 0, "opacity": "0.85"},
+                        "Fuente: DANE — Estadísticas Vitales de Mortalidad No Fetal",
+                        style={
+                            "margin": 0,
+                            "opacity": "0.85",
+                            "fontSize": "13px",
+                        },
                     ),
                 ],
             ),
 
             # Row 1 — Map (full width)
-            html.Div(style=_CARD, children=[dcc.Graph(figure=map_chart())]),
+            html.Div(
+                style=_CARD,
+                children=[dcc.Graph(figure=map_chart())],
+            ),
 
             # Row 2 — Line chart (full width)
-            html.Div(style=_CARD, children=[dcc.Graph(figure=line_chart())]),
+            html.Div(
+                style=_CARD,
+                children=[dcc.Graph(figure=line_chart())],
+            ),
 
             # Row 3 — Bar (violent cities) | Pie (lowest mortality)
             html.Div(
-                style={"display": "grid", "gridTemplateColumns": "1fr 1fr", "gap": "24px"},
+                style={
+                    "display": "grid",
+                    "gridTemplateColumns": "1fr 1fr",
+                    "gap": "24px",
+                    "marginBottom": "24px",
+                },
                 children=[
                     html.Div(style=_CARD, children=[dcc.Graph(figure=bar_chart_violent())]),
                     html.Div(style=_CARD, children=[dcc.Graph(figure=pie_chart())]),
@@ -93,28 +145,33 @@ def build_layout() -> html.Div:
 
             # Row 4 — Table (top 10 causes)
             html.Div(
-                style={**_CARD, "overflowX": "auto"},
+                style=_CARD,
                 children=[
                     html.H3(
-                        "Top 10 causas de muerte — Colombia 2019",
-                        style={"marginTop": 0, "color": "#1d3557"},
+                        "Principales causas de muerte",
+                        style={
+                            "marginTop": 0,
+                            "color": _COLOR_DARK,
+                            "fontSize": "1.2rem",
+                            "fontWeight": "600",
+                            "borderBottom": f"3px solid {_COLOR_BRIGHT}",
+                            "paddingBottom": "12px",
+                        },
                     ),
                     _causes_table(),
                 ],
             ),
 
             # Row 5 — Stacked bar (full width)
-            html.Div(style=_CARD, children=[dcc.Graph(figure=stacked_bar_chart())]),
+            html.Div(
+                style=_CARD,
+                children=[dcc.Graph(figure=stacked_bar_chart())],
+            ),
 
             # Row 6 — Histogram (full width)
-            html.Div(style=_CARD, children=[dcc.Graph(figure=histogram_age())]),
-
-            # Footer
             html.Div(
-                style={"textAlign": "center", "color": "#6c757d", "paddingTop": "8px"},
-                children=[
-                    html.Small("Datos: DANE NoFetal2019 · Desarrollado con Dash & Plotly")
-                ],
+                style=_CARD,
+                children=[dcc.Graph(figure=histogram_age())],
             ),
         ],
     )
