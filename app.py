@@ -14,4 +14,4 @@ server = app.server  # expose Flask server for gunicorn
 app.layout = build_layout()
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=8050)
+    app.run(debug=False, host="0.0.0.0", port=8050)
