@@ -10,6 +10,7 @@ _SEX_COLORS = {
 }
 
 _COLOR_DARK = "#332400"
+_FONT = "Poppins, Segoe UI"
 
 
 def stacked_bar_chart() -> go.Figure:
@@ -25,22 +26,25 @@ def stacked_bar_chart() -> go.Figure:
                 x=depts,
                 y=subset["TOTAL"].fillna(0),
                 marker_color=color,
-                hovertemplate=f"{sexo} — %{{x}}: %{{y:,.0f}}<extra></extra>",
+                hovertemplate=f"<b>{sexo}</b> — %{{x}}<br>%{{y:,.0f}}<extra></extra>",
             )
         )
 
     fig.update_layout(
         barmode="stack",
-        title="Mortalidad por sexo y departamento",
-        xaxis_title="Departamento",
-        yaxis_title="Total",
+        title="MORTALIDAD POR SEXO Y DEPARTAMENTO",
+        xaxis_title="DEPARTAMENTO",
+        yaxis_title="TOTAL",
         xaxis_tickangle=-45,
         height=480,
-        margin={"t": 60, "b": 140},
-        title_font={"size": 18, "color": _COLOR_DARK, "family": "Segoe UI"},
-        legend_title="Sexo",
-        xaxis={"showgrid": False},
-        yaxis={"showgrid": True, "gridwidth": 1, "gridcolor": "rgba(51, 36, 0, 0.05)"},
-        plot_bgcolor="rgba(255, 245, 220, 0.3)",
+        margin={"t": 60, "b": 140, "l": 60, "r": 40},
+        title_font={"size": 16, "color": _COLOR_DARK, "family": _FONT, "weight": "bold"},
+        title_x=0.05,
+        legend_title_text="SEXO",
+        xaxis={"showgrid": False, "tickfont": {"size": 10, "family": _FONT}},
+        yaxis={"showgrid": True, "gridwidth": 1, "gridcolor": "rgba(51, 36, 0, 0.08)", "tickfont": {"size": 11, "family": _FONT}},
+        plot_bgcolor="rgba(255, 255, 255, 0.5)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        font={"family": _FONT, "color": _COLOR_DARK},
     )
     return fig

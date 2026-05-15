@@ -11,24 +11,24 @@ from data.processor import top10_causes
 
 # Ocre palette
 _COLOR_DARK = "#332400"
-_COLOR_DARKER = "#654801"
+_COLOR_DARKER = "#1A1200"
 _COLOR_MED = "#A27402"
 _COLOR_ACCENT = "#DE9F02"
 _COLOR_BRIGHT = "#FDBE21"
 _COLOR_LIGHT = "#FEECBD"
 _COLOR_LIGHTER = "#FEE19A"
-_COLOR_BG = "#FFF5DC"
 
 _CARD = {
-    "background": _COLOR_LIGHT,
+    "background": "#ffffff",
     "borderRadius": "12px",
-    "boxShadow": "0 4px 12px rgba(51, 36, 0, 0.1)",
-    "padding": "24px",
-    "marginBottom": "24px",
-    "border": f"1px solid {_COLOR_LIGHTER}",
+    "borderLeft": f"5px solid {_COLOR_DARK}",
+    "boxShadow": "0 6px 20px rgba(51, 36, 0, 0.12), 4px 8px 16px rgba(51, 36, 0, 0.06)",
+    "padding": "28px",
+    "marginBottom": "28px",
+    "transition": "all 0.3s ease",
 }
 
-_FONT_FAMILY = '"Segoe UI", "Trebuchet MS", sans-serif'
+_FONT_FAMILY = '"Poppins", "Segoe UI", sans-serif'
 
 
 def _causes_table() -> dash_table.DataTable:
@@ -36,33 +36,36 @@ def _causes_table() -> dash_table.DataTable:
     return dash_table.DataTable(
         id="causes-table",
         columns=[
-            {"name": "Código", "id": "COD_MUERTE"},
-            {"name": "Causa de muerte", "id": "NOMBRE_MUERTE"},
-            {"name": "Total casos", "id": "TOTAL", "type": "numeric",
+            {"name": "CÓDIGO", "id": "COD_MUERTE"},
+            {"name": "CAUSA DE MUERTE", "id": "NOMBRE_MUERTE"},
+            {"name": "TOTAL", "id": "TOTAL", "type": "numeric",
              "format": {"specifier": ","}},
         ],
         data=df.to_dict("records"),
         style_header={
             "backgroundColor": _COLOR_DARKER,
             "color": "#ffffff",
-            "fontWeight": "600",
+            "fontWeight": "700",
             "textAlign": "center",
             "fontFamily": _FONT_FAMILY,
-            "fontSize": "14px",
-            "borderBottom": f"2px solid {_COLOR_ACCENT}",
-            "padding": "12px",
+            "fontSize": "13px",
+            "letterSpacing": "1px",
+            "borderBottom": f"3px solid {_COLOR_BRIGHT}",
+            "padding": "14px",
+            "textTransform": "uppercase",
         },
         style_cell={
             "textAlign": "left",
-            "padding": "12px",
+            "padding": "14px",
             "fontFamily": _FONT_FAMILY,
             "fontSize": "13px",
             "whiteSpace": "normal",
             "height": "auto",
             "color": _COLOR_DARK,
+            "borderBottom": "1px solid #f0f0f0",
         },
         style_data_conditional=[
-            {"if": {"row_index": "odd"}, "backgroundColor": _COLOR_LIGHTER}
+            {"if": {"row_index": "odd"}, "backgroundColor": "#fafafa"}
         ],
         page_action="none",
     )
@@ -72,70 +75,95 @@ def build_layout() -> html.Div:
     return html.Div(
         style={
             "fontFamily": _FONT_FAMILY,
-            "backgroundColor": _COLOR_BG,
-            "padding": "32px 24px",
+            "backgroundColor": "#ffffff",
+            "padding": "40px 28px",
             "minHeight": "100vh",
         },
         children=[
             # Header
             html.Div(
                 style={
-                    "background": f"linear-gradient(135deg, {_COLOR_DARK} 0%, {_COLOR_DARKER} 100%)",
+                    "background": f"linear-gradient(135deg, {_COLOR_DARKER} 0%, {_COLOR_DARK} 50%, {_COLOR_MED} 100%)",
                     "color": "#ffffff",
-                    "padding": "40px 36px",
+                    "padding": "48px 42px",
                     "borderRadius": "16px",
-                    "marginBottom": "36px",
-                    "boxShadow": "0 8px 24px rgba(51, 36, 0, 0.15)",
+                    "marginBottom": "42px",
+                    "boxShadow": "0 12px 36px rgba(51, 36, 0, 0.2), 0 6px 18px rgba(51, 36, 0, 0.12)",
+                    "position": "relative",
+                    "overflow": "hidden",
                 },
                 children=[
-                    html.H1(
-                        "Mortalidad en Colombia",
+                    # Línea decorativa sutil
+                    html.Div(
                         style={
-                            "margin": "0 0 12px 0",
-                            "fontSize": "2.4rem",
+                            "position": "absolute",
+                            "top": 0,
+                            "left": 0,
+                            "right": 0,
+                            "height": "4px",
+                            "background": f"linear-gradient(90deg, transparent, {_COLOR_BRIGHT}, transparent)",
+                        }
+                    ),
+                    html.H1(
+                        "MORTALIDAD EN COLOMBIA",
+                        style={
+                            "margin": "0 0 14px 0",
+                            "fontSize": "2.6rem",
                             "fontWeight": "700",
-                            "letterSpacing": "-0.5px",
+                            "letterSpacing": "-0.8px",
+                            "textTransform": "uppercase",
+                            "position": "relative",
+                            "zIndex": 1,
                         },
                     ),
                     html.H2(
-                        "Análisis de Estadísticas Vitales — 2019",
+                        "Análisis Estadísticas Vitales — 2019",
                         style={
-                            "margin": "0 0 8px 0",
-                            "fontSize": "1rem",
-                            "fontWeight": "300",
-                            "color": _COLOR_BG,
+                            "margin": "0 0 12px 0",
+                            "fontSize": "0.95rem",
+                            "fontWeight": "500",
+                            "letterSpacing": "1.2px",
+                            "textTransform": "uppercase",
+                            "color": _COLOR_BRIGHT,
+                            "position": "relative",
+                            "zIndex": 1,
                         },
+                    ),
+                    html.Div(
+                        style={
+                            "width": "50px",
+                            "height": "3px",
+                            "background": _COLOR_BRIGHT,
+                            "marginBottom": "16px",
+                        }
                     ),
                     html.P(
                         "Fuente: DANE — Estadísticas Vitales de Mortalidad No Fetal",
                         style={
                             "margin": 0,
-                            "opacity": "0.85",
+                            "opacity": "0.9",
                             "fontSize": "13px",
+                            "fontWeight": "300",
+                            "position": "relative",
+                            "zIndex": 1,
                         },
                     ),
                 ],
             ),
 
             # Row 1 — Map (full width)
-            html.Div(
-                style=_CARD,
-                children=[dcc.Graph(figure=map_chart())],
-            ),
+            html.Div(style=_CARD, children=[dcc.Graph(figure=map_chart())]),
 
             # Row 2 — Line chart (full width)
-            html.Div(
-                style=_CARD,
-                children=[dcc.Graph(figure=line_chart())],
-            ),
+            html.Div(style=_CARD, children=[dcc.Graph(figure=line_chart())]),
 
             # Row 3 — Bar (violent cities) | Pie (lowest mortality)
             html.Div(
                 style={
                     "display": "grid",
                     "gridTemplateColumns": "1fr 1fr",
-                    "gap": "24px",
-                    "marginBottom": "24px",
+                    "gap": "28px",
+                    "marginBottom": "28px",
                 },
                 children=[
                     html.Div(style=_CARD, children=[dcc.Graph(figure=bar_chart_violent())]),
@@ -145,33 +173,44 @@ def build_layout() -> html.Div:
 
             # Row 4 — Table (top 10 causes)
             html.Div(
-                style=_CARD,
+                style={**_CARD, "paddingTop": "0"},
                 children=[
-                    html.H3(
-                        "Principales causas de muerte",
+                    html.Div(
                         style={
-                            "marginTop": 0,
-                            "color": _COLOR_DARK,
-                            "fontSize": "1.2rem",
-                            "fontWeight": "600",
-                            "borderBottom": f"3px solid {_COLOR_BRIGHT}",
-                            "paddingBottom": "12px",
+                            "display": "flex",
+                            "alignItems": "center",
+                            "gap": "16px",
+                            "marginBottom": "24px",
                         },
+                        children=[
+                            html.Div(
+                                style={
+                                    "width": "4px",
+                                    "height": "28px",
+                                    "background": _COLOR_BRIGHT,
+                                }
+                            ),
+                            html.H3(
+                                "PRINCIPALES CAUSAS DE MUERTE",
+                                style={
+                                    "margin": 0,
+                                    "color": _COLOR_DARK,
+                                    "fontSize": "1.1rem",
+                                    "fontWeight": "700",
+                                    "letterSpacing": "0.5px",
+                                    "textTransform": "uppercase",
+                                },
+                            ),
+                        ],
                     ),
                     _causes_table(),
                 ],
             ),
 
             # Row 5 — Stacked bar (full width)
-            html.Div(
-                style=_CARD,
-                children=[dcc.Graph(figure=stacked_bar_chart())],
-            ),
+            html.Div(style=_CARD, children=[dcc.Graph(figure=stacked_bar_chart())]),
 
             # Row 6 — Histogram (full width)
-            html.Div(
-                style=_CARD,
-                children=[dcc.Graph(figure=histogram_age())],
-            ),
+            html.Div(style=_CARD, children=[dcc.Graph(figure=histogram_age())]),
         ],
     )
