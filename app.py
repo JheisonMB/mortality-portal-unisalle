@@ -10,8 +10,9 @@ app = dash.Dash(
 )
 server = app.server  # expose Flask server for gunicorn
 
-# Pre-build layout at startup; all lru_cached aggregations computed once here
-app.layout = build_layout()
+# Pass function reference; Dash calls it on first request.
+# Data functions use @lru_cache so aggregations compute only once.
+app.layout = build_layout
 
 if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0", port=8050)
