@@ -1,0 +1,8 @@
+[documento]
+titulo = "Dashboard Interactivo de Mortalidad en Colombia 2019"
+autor = "Jheison Martinez"
+template = "apa-unisalle"
+
+[compilacion]
+entry = "main.tex"
+bibliografia = "bib/references.bib"

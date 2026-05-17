@@ -1,0 +1,390 @@
+%% main.tex — Dashboard Interactivo de Mortalidad en Colombia 2019
+
+\documentclass[a4paper,12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{acronym}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{indentfirst}
+\usepackage{lmodern}
+\usepackage{longtable}
+\usepackage{makecell}
+\usepackage{microtype}
+\usepackage[nottoc]{tocbibind}
+\usepackage{setspace}
+\usepackage{siunitx}
+\usepackage{titlesec}
+\usepackage{url}
+\usepackage{csquotes}
+\usepackage{xcolor}
+\usepackage{listings}
+
+\geometry{top=3cm,bottom=3cm,left=3cm,right=3cm}
+
+\titleformat{\chapter}[display]{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-30pt}{20pt}
+\titleformat{\section}[block]{\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}[block]{\normalfont\large\bfseries}{\thesubsection}{1em}{}
+
+\numberwithin{equation}{chapter}
+\numberwithin{figure}{chapter}
+\numberwithin{table}{chapter}
+
+\onehalfspacing
+\setlength{\parskip}{1.0em}
+
+\definecolor{ocredark}{HTML}{332400}
+\definecolor{ocremid}{HTML}{654801}
+\definecolor{codebg}{HTML}{FFF8EC}
+
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{ocredark}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{ocremid},
+    breaklines=true,
+    showstringspaces=false,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    numbersep=8pt,
+    frame=single,
+    framerule=0.4pt,
+    rulecolor=\color{ocremid},
+    backgroundcolor=\color{codebg},
+    captionpos=b,
+    xleftmargin=1.5em,
+    xrightmargin=0.5em
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Aplicaciones 1}
+\lhead{Universidad de La Salle}
+\cfoot{\thepage}
+
+\newcommand{\titulo}{Dashboard Interactivo de Mortalidad en Colombia 2019}
+\newcommand{\subtitulo}{Aplicación web dinámica con Plotly y Dash en Python}
+\newcommand{\autor}{Jheison Martinez}
+\newcommand{\codigo}{Código estudiantil}
+\newcommand{\programa}{Ingeniería en Sistemas}
+\newcommand{\universidad}{Universidad de La Salle}
+\newcommand{\asignatura}{Aplicaciones 1}
+\newcommand{\correo}{correo@unisalle.edu.co}
+
+\hypersetup{
+    pdfauthor={\autor},
+    pdftitle={\titulo},
+    pdfsubject={\programa},
+    pdfkeywords={mortalidad, Colombia, dashboard, Plotly, Dash, Python},
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=ocremid
+}
+
+\begin{document}
+
+%% ─── PORTADA ──────────────────────────────────────────────────────────────
+\begin{titlepage}
+    \centering\vspace*{\fill}
+    \includegraphics[width=7cm]{assets/images/logosalle.png}\\[1cm]
+    {\large\universidad}\\[0.3cm]
+    {\large\programa}\\[0.3cm]
+    {\large\asignatura}\\[2.5cm]
+    {\LARGE\bfseries \titulo}\\[0.8cm]
+    {\large\itshape \subtitulo}\\[2.5cm]
+    \textbf{Estudiante:} \autor\\\vspace{0.3cm}
+    \textbf{Fecha:} \today\\\vspace*{\fill}
+\end{titlepage}
+
+\thispagestyle{empty}\newpage
+
+%% ─── RESUMEN ──────────────────────────────────────────────────────────────
+\chapter*{Resumen}\addcontentsline{toc}{chapter}{Resumen}
+
+Este informe describe el desarrollo de una aplicación web interactiva para el análisis de la mortalidad no fetal en Colombia durante el año 2019. La aplicación fue construida con \textbf{Python}, usando \textbf{Plotly} para la generación de gráficos y \textbf{Dash} como framework web, e integra siete visualizaciones sobre un conjunto de datos de 244\,226 registros oficiales del DANE.
+
+El documento presenta la arquitectura de la solución, el procesamiento de los datos, la descripción de cada visualización implementada y la configuración de despliegue en la plataforma \textbf{Render}.
+
+\textit{Palabras clave}: mortalidad, Colombia 2019, dashboard interactivo, Plotly, Dash, DANE, análisis de datos.
+
+\tableofcontents\thispagestyle{empty}
+\listoftables\thispagestyle{empty}
+
+%% ─── CAPÍTULO 1: INTRODUCCIÓN ─────────────────────────────────────────────
+\chapter{Introducción}\label{chap:introduccion}
+
+\section{Contextualización}
+
+En Colombia, el análisis de la mortalidad constituye una herramienta fundamental para la toma de decisiones en salud pública. El Departamento Administrativo Nacional de Estadística (DANE) publica anualmente los registros de defunciones no fetales, permitiendo identificar causas de muerte, distribución geográfica y patrones demográficos.
+
+Esta actividad propone construir una aplicación web dinámica que facilite la exploración visual de dichos datos para el año 2019, haciendo accesible el análisis a través de una interfaz interactiva publicada en la nube.
+
+\section{Objetivo General}
+
+Desarrollar e implementar un dashboard interactivo en Python con Plotly y Dash que visualice los datos de mortalidad no fetal de Colombia para el año 2019, incluyendo siete representaciones gráficas complementarias y desplegado en una plataforma en la nube.
+
+\section{Objetivos Específicos}
+
+\begin{enumerate}
+    \item Procesar y limpiar los conjuntos de datos oficiales del DANE para su uso en el dashboard.
+    \item Implementar las siete visualizaciones requeridas: mapa coroplético, gráfico de líneas, gráfico de barras, gráfico circular, tabla, barras apiladas e histograma.
+    \item Estructurar el código en capas separadas (carga de datos, procesamiento y presentación) siguiendo principios de diseño limpio.
+    \item Desplegar la aplicación en la plataforma Render como servicio web accesible públicamente.
+\end{enumerate}
+
+%% ─── CAPÍTULO 2: FUENTES DE DATOS ────────────────────────────────────────
+\chapter{Fuentes de Datos}\label{chap:datos}
+
+\section{Conjuntos de datos utilizados}
+
+Se emplearon cinco archivos provistos por el DANE, convertidos a formato CSV para facilitar su procesamiento con \texttt{pandas}. Todos los archivos fueron almacenados en \texttt{data/raw/} para separar los datos crudos del código fuente.
+
+\begin{table}[H]
+    \centering
+    \caption{Archivos de datos utilizados}
+    \label{tab:datos}
+    \begin{tabular}{p{7cm}p{7cm}}
+        \toprule
+        \textbf{Archivo} & \textbf{Descripción} \\
+        \midrule
+        \texttt{Anexo1.NoFetal2019\_ CE\_15-03-23.csv} & Registros individuales de defunción no fetal (244\,226 registros). \\[0.5em]
+        \texttt{Anexo2.CodigosDeMuerte\_ CE\_15-03-23.csv} & Catálogo CIE-10 con código y nombre de cada causa de muerte (12\,568 entradas). \\[0.5em]
+        \texttt{Divipola\_CE\_Hoja1.csv} & División político-administrativa: municipios y departamentos con códigos DANE. \\[0.5em]
+        \texttt{Divipola\_CE\_Hoja3.csv} & Información extendida de municipios con coordenadas geográficas. \\[0.5em]
+        \texttt{Colombia.geo.json} & Polígonos departamentales para el mapa coroplético (33 features GeoJSON). \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Consideraciones en el preprocesamiento}
+
+Durante la carga de datos se identificaron y resolvieron dos problemas específicos:
+
+\begin{enumerate}
+    \item \textbf{BOM en la primera columna}: el archivo de mortalidad incluía una marca de orden de bytes (\textit{Byte Order Mark}) al inicio. Se resolvió con \texttt{encoding="utf-8-sig"} al leer el CSV y renombrando la primera columna explícitamente.
+
+    \item \textbf{Comas finales inconsistentes en el catálogo CIE-10}: el archivo \texttt{Anexo2} presentaba comas adicionales al final de cada fila, generando 7 campos en lugar de 6. La solución empleada fue un lector manual con \texttt{csv.reader} que trunca cada fila a los primeros 6 campos, descartando el campo espurio.
+\end{enumerate}
+
+%% ─── CAPÍTULO 3: ARQUITECTURA ────────────────────────────────────────────
+\chapter{Arquitectura de la Solución}\label{chap:arquitectura}
+
+\section{Estructura del proyecto}
+
+La aplicación sigue una separación estricta de responsabilidades en tres capas: carga de datos, procesamiento analítico y presentación visual.
+
+\begin{lstlisting}[language={}, caption={Estructura de archivos del proyecto}, label={lst:tree}]
+analytics/
+  app.py                  # Punto de entrada Dash / Gunicorn
+  layout.py               # Ensamble del dashboard completo
+  Procfile                # Configuracion para Render
+  requirements.txt        # Dependencias Python
+  data/
+    loader.py             # Carga y cacheo de DataFrames
+    processor.py          # Agregaciones analiticas (7 funciones)
+    raw/                  # Archivos CSV y GeoJSON
+  components/
+    map_chart.py          # Mapa coro pletico por departamento
+    line_chart.py         # Muertes por mes
+    bar_chart.py          # 5 ciudades mas violentas
+    pie_chart.py          # 10 ciudades con menor mortalidad
+    stacked_bar.py        # Muertes por sexo y departamento
+    histogram.py          # Distribucion por grupo de edad
+\end{lstlisting}
+
+\section{Capa de datos — \texttt{data/loader.py}}
+
+El módulo \texttt{loader.py} expone cuatro funciones decoradas con \texttt{@lru\_cache(maxsize=1)}, garantizando que cada DataFrame se lea desde disco exactamente una vez durante el ciclo de vida de la aplicación. Esto es crítico en producción: con 244\,226 registros, la carga inicial toma aproximadamente 2.5 segundos; todas las solicitudes posteriores usan el caché en memoria.
+
+\lstinputlisting[
+    caption={Carga de registros de mortalidad en \texttt{loader.py}},
+    label={lst:loader-mortality},
+    firstline=18,
+    lastline=29
+]{/home/jheisonmblivecom/Academic/Deriverables/python/analytics/data/loader.py}
+
+\lstinputlisting[
+    caption={Parser manual para el catálogo CIE-10 con comas inconsistentes},
+    label={lst:loader-codes},
+    firstline=33,
+    lastline=49
+]{/home/jheisonmblivecom/Academic/Deriverables/python/analytics/data/loader.py}
+
+\section{Capa de procesamiento — \texttt{data/processor.py}}
+
+El módulo \texttt{processor.py} define siete funciones, una por cada visualización. Cada función devuelve un \texttt{DataFrame} directamente consumible por el componente correspondiente y también está cacheada. Esta separación permite probar las agregaciones de forma independiente del front-end.
+
+\lstinputlisting[
+    caption={Agregación de muertes por departamento},
+    label={lst:dept},
+    firstline=47,
+    lastline=63
+]{/home/jheisonmblivecom/Academic/Deriverables/python/analytics/data/processor.py}
+
+\section{Capa de presentación — \texttt{components/} y \texttt{layout.py}}
+
+Cada archivo en \texttt{components/} construye una figura Plotly independiente invocando la función de procesamiento correspondiente. \texttt{layout.py} ensambla todos los componentes en la estructura HTML final del dashboard.
+
+\section{Punto de entrada — \texttt{app.py}}
+
+\lstinputlisting[
+    caption={Punto de entrada de la aplicación},
+    label={lst:app},
+    firstline=1,
+    lastline=17
+]{/home/jheisonmblivecom/Academic/Deriverables/python/analytics/app.py}
+
+La línea clave es \texttt{app.layout = build\_layout()} (no la función, sino su resultado): el layout se construye una vez en el inicio del proceso y se almacena en memoria. Si se pasara la función callable, el layout se recalcularía en cada solicitud HTTP, causando tiempos de respuesta de más de 2 segundos.
+
+La variable \texttt{server = app.server} expone el servidor Flask subyacente de Dash, necesario para que Gunicorn pueda servir la aplicación.
+
+%% ─── CAPÍTULO 4: VISUALIZACIONES ─────────────────────────────────────────
+\chapter{Visualizaciones Implementadas}\label{chap:visualizaciones}
+
+\section{Mapa coroplético — distribución de muertes por departamento}
+
+Visualiza el total de fallecimientos en cada departamento de Colombia mediante un mapa coroplético con escala de color ocre. Los datos de mortalidad usan códigos DANE de 2 dígitos que deben rellenarse con cero a la izquierda (\texttt{zfill(2)}) para coincidir con la propiedad \texttt{DPTO} del GeoJSON. La clave de unión es \texttt{featureidkey="properties.DPTO"}.
+
+\section{Gráfico de líneas — muertes por mes}
+
+Representa la variación mensual de defunciones de enero a diciembre de 2019. Se agrupa por la columna \texttt{MES} y se visualiza con área rellena bajo la curva para evidenciar patrones estacionales.
+
+\section{Gráfico de barras — 5 ciudades más violentas}
+
+Identifica las cinco ciudades con mayor número de homicidios con arma de fuego, filtrando los registros cuyo código CIE-10 comienza con \texttt{X95} (agresión con disparo de arma de fuego, especificada y no especificada).
+
+\lstinputlisting[
+    caption={Agregación de homicidios por arma de fuego (código X95)},
+    label={lst:top5},
+    firstline=76,
+    lastline=99
+]{/home/jheisonmblivecom/Academic/Deriverables/python/analytics/data/processor.py}
+
+\section{Gráfico circular — 10 ciudades con menor mortalidad}
+
+Identifica los diez municipios con el menor total de defunciones registradas, excluyendo aquellos con cero muertes (que indicarían ausencia de cobertura de datos, no ausencia real de mortalidad). Se presenta como donut con la paleta ocre definida en el proyecto.
+
+\section{Tabla — 10 principales causas de muerte}
+
+Cruza los registros de mortalidad con el catálogo CIE-10 para obtener el nombre de cada causa. Presenta las diez más frecuentes ordenadas de mayor a menor, con las columnas: código, nombre de la causa y total de casos. Se implementó con \texttt{dash\_table.DataTable} para permitir ordenamiento interactivo.
+
+\section{Gráfico de barras apiladas — muertes por sexo y departamento}
+
+Compara el total de defunciones por sexo (masculino, femenino e indeterminado) en cada departamento, permitiendo identificar diferencias regionales. Los valores de la columna \texttt{SEXO} se mapean: 1 → Masculino, 2 → Femenino, 3 → Indeterminado.
+
+\section{Histograma — distribución por grupo de edad}
+
+Mapea la columna \texttt{GRUPO\_EDAD1} a las once categorías DANE y construye un histograma de barras ordenado cronológicamente a lo largo del ciclo de vida.
+
+\begin{table}[H]
+    \centering
+    \caption{Clasificación por grupos de edad según el DANE}
+    \label{tab:edades}
+    \begin{tabular}{llc}
+        \toprule
+        \textbf{Categoría} & \textbf{Rango de edad} & \textbf{Códigos DANE} \\
+        \midrule
+        Mortalidad neonatal      & Menor de 1 mes    & 0--4   \\
+        Mortalidad infantil      & 1 a 11 meses      & 5--6   \\
+        Primera infancia         & 1 a 4 años        & 7--8   \\
+        Niñez                    & 5 a 14 años       & 9--10  \\
+        Adolescencia             & 15 a 19 años      & 11     \\
+        Juventud                 & 20 a 29 años      & 12--13 \\
+        Adultez temprana         & 30 a 44 años      & 14--16 \\
+        Adultez intermedia       & 45 a 59 años      & 17--19 \\
+        Vejez                    & 60 a 84 años      & 20--24 \\
+        Longevidad / Centenarios & 85 a 100+ años    & 25--28 \\
+        Edad desconocida         & Sin información   & 29     \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\lstinputlisting[
+    caption={Función de agregación por grupo etario según la clasificación DANE},
+    label={lst:age},
+    firstline=165,
+    lastline=179
+]{/home/jheisonmblivecom/Academic/Deriverables/python/analytics/data/processor.py}
+
+%% ─── CAPÍTULO 5: DESPLIEGUE ──────────────────────────────────────────────
+\chapter{Despliegue en Render}\label{chap:despliegue}
+
+\section{Plataforma seleccionada}
+
+La aplicación está preparada para despliegue en \textbf{Render} como \textit{Web Service}. Render fue elegido por ofrecer un plan gratuito funcional para proyectos académicos, integración directa con repositorios Git, detección automática del runtime Python y soporte nativo para Gunicorn.
+
+\begin{table}[H]
+    \centering
+    \caption{Configuración del Web Service en Render}
+    \label{tab:render}
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{Parámetro} & \textbf{Valor} \\
+        \midrule
+        Tipo de servicio  & Web Service \\
+        Runtime           & Python 3 \\
+        Build Command     & \texttt{pip install -r requirements.txt} \\
+        Start Command     & \texttt{gunicorn app:server -{}-workers 1 -{}-threads 2 -{}-timeout 120} \\
+        Plan              & Free (gratuito) \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Archivos de configuración}
+
+El archivo \texttt{Procfile} define el comando de inicio para Gunicorn:
+
+\begin{lstlisting}[language={}, caption={Procfile para Render}, label={lst:procfile}]
+web: gunicorn app:server --workers 1 --threads 2 --timeout 120
+\end{lstlisting}
+
+El parámetro \texttt{-{}-timeout 120} es necesario porque la primera solicitud carga los 244\,226 registros en memoria; un timeout de 30 segundos (valor por defecto de Gunicorn) sería insuficiente.
+
+Las dependencias de producción se especifican en \texttt{requirements.txt}:
+
+\begin{lstlisting}[language={}, caption={requirements.txt con versiones fijadas}, label={lst:req}]
+dash==2.18.2
+plotly==5.24.1
+pandas==2.2.3
+gunicorn==23.0.0
+\end{lstlisting}
+
+\section{Consideraciones del plan gratuito}
+
+El plan gratuito de Render tiene la limitación de que el servicio entra en modo de suspensión tras 15 minutos de inactividad. Al recibir una nueva solicitud, el proceso debe reiniciarse, lo que implica recargar todos los datos y puede tardar entre 30 y 60 segundos. Para un uso académico de demostración, esta limitación es aceptable.
+
+%% ─── CAPÍTULO 6: CONCLUSIONES ────────────────────────────────────────────
+\chapter{Conclusiones}\label{chap:conclusiones}
+
+La aplicación desarrollada cumple íntegramente los requisitos de la actividad: implementa las siete visualizaciones sobre los datos de mortalidad no fetal de Colombia 2019, organiza el código en capas claramente separadas y está lista para despliegue en la nube.
+
+Los aprendizajes principales obtenidos durante el desarrollo incluyen:
+
+\begin{itemize}
+    \item \textbf{Plotly y Dash}: construcción de visualizaciones interactivas y ensamble de dashboards multi-panel con estilos personalizados.
+    \item \textbf{Manejo de datos geoespaciales}: uso de GeoJSON con Plotly Choropleth y correspondencia de claves de unión entre DataFrames y propiedades del GeoJSON.
+    \item \textbf{Optimización con caché}: el uso de \texttt{lru\_cache} fue determinante para hacer la aplicación viable en producción con datos de gran volumen.
+    \item \textbf{Limpieza de datos}: el preprocesamiento de los archivos DANE requirió resolver problemas reales de calidad de datos (BOM, comas inconsistentes) que no serían evidentes sin análisis previo.
+    \item \textbf{Despliegue en la nube}: configuración de Gunicorn como servidor WSGI y uso de Render como plataforma PaaS.
+\end{itemize}
+
+%% ─── REFERENCIAS ─────────────────────────────────────────────────────────
+\chapter*{Referencias}\addcontentsline{toc}{chapter}{Referencias}
+\bibliographystyle{apa}
+\bibliography{bib/references}
+
+\end{document}
