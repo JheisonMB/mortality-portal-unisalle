@@ -55,10 +55,10 @@ def deaths_by_department() -> pd.DataFrame:
         subset="CodigoDepartamento"
     )
 
-    m["COD_DEPT"] = m["COD_DEPARTAMENTO"].apply(_dept_code_str)
+    m = m.assign(COD_DEPT=lambda x: x["COD_DEPARTAMENTO"].apply(_dept_code_str))
     df = m.groupby("COD_DEPT", as_index=False).size().rename(columns={"size": "TOTAL"})
     df = df.merge(g, left_on="COD_DEPT", right_on="CodigoDepartamento", how="left")
-    df["DEPARTAMENTO"] = df["Departamento"].fillna(df["COD_DEPT"])
+    df = df.assign(DEPARTAMENTO=lambda x: x["Departamento"].fillna(x["COD_DEPT"]))
     return df[["COD_DEPT", "DEPARTAMENTO", "TOTAL"]].sort_values("TOTAL", ascending=False)
 
 
@@ -84,10 +84,10 @@ def top5_violent_cities() -> pd.DataFrame:
         subset="CodigoMunicipio"
     )
 
-    # X95 codes (4-char) or X95 (3-char) — match on 3-char prefix
-    firearm = m[m["COD_MUERTE"].str.startswith("X95", na=False)].copy()
-    firearm["MUN_KEY"] = firearm.apply(
-        lambda r: _municipality_key(r["COD_DEPARTAMENTO"], r["COD_MUNICIPIO"]), axis=1
+    firearm = m[m["COD_MUERTE"].str.startswith("X95", na=False)].assign(
+        MUN_KEY=lambda x: x.apply(
+            lambda r: _municipality_key(r["COD_DEPARTAMENTO"], r["COD_MUNICIPIO"]), axis=1
+        )
     )
     df = (
         firearm.groupby("MUN_KEY", as_index=False)
@@ -110,8 +110,10 @@ def bottom10_mortality_cities() -> pd.DataFrame:
         subset="CodigoMunicipio"
     )
 
-    m["MUN_KEY"] = m.apply(
-        lambda r: _municipality_key(r["COD_DEPARTAMENTO"], r["COD_MUNICIPIO"]), axis=1
+    m = m.assign(
+        MUN_KEY=lambda x: x.apply(
+            lambda r: _municipality_key(r["COD_DEPARTAMENTO"], r["COD_MUNICIPIO"]), axis=1
+        )
     )
     df = m.groupby("MUN_KEY", as_index=False).size().rename(columns={"size": "TOTAL"})
     df = df[df["TOTAL"] > 0]
@@ -149,16 +151,22 @@ def deaths_by_sex_department() -> pd.DataFrame:
         subset="CodigoDepartamento"
     )
 
-    m = m[m["SEXO"].isin([1, 2, 3])].copy()
-    m["COD_DEPT"] = m["COD_DEPARTAMENTO"].apply(_dept_code_str)
-    m["SEXO_LABEL"] = m["SEXO"].map({1: "Masculino", 2: "Femenino", 3: "Indeterminado"})
+    m = (
+        m[m["SEXO"].isin([1, 2, 3])]
+        .assign(
+            COD_DEPT=lambda x: x["COD_DEPARTAMENTO"].apply(_dept_code_str),
+            SEXO_LABEL=lambda x: x["SEXO"].map(
+                {1: "Masculino", 2: "Femenino", 3: "Indeterminado"}
+            ),
+        )
+    )
     df = (
         m.groupby(["COD_DEPT", "SEXO_LABEL"], as_index=False)
         .size()
         .rename(columns={"size": "TOTAL"})
     )
     df = df.merge(g, left_on="COD_DEPT", right_on="CodigoDepartamento", how="left")
-    df["DEPARTAMENTO"] = df["Departamento"].fillna(df["COD_DEPT"])
+    df = df.assign(DEPARTAMENTO=lambda x: x["Departamento"].fillna(x["COD_DEPT"]))
     return df[["COD_DEPT", "DEPARTAMENTO", "SEXO_LABEL", "TOTAL"]]
 
 
@@ -169,11 +177,17 @@ def deaths_by_age_group() -> pd.DataFrame:
     Returns: CATEGORIA, TOTAL
     """
     m = mortality().dropna(subset=["GRUPO_EDAD1"])
-    m = m[m["GRUPO_EDAD1"].notna()].copy()
-    m["GRUPO_EDAD1"] = m["GRUPO_EDAD1"].astype(int)
-    m["CATEGORIA"] = m["GRUPO_EDAD1"].map(_AGE_LABELS).fillna("Edad desconocida")
+    m = (
+        m[m["GRUPO_EDAD1"].notna()]
+        .assign(GRUPO_EDAD1=lambda x: x["GRUPO_EDAD1"].astype(int))
+        .assign(
+            CATEGORIA=lambda x: x["GRUPO_EDAD1"].map(_AGE_LABELS).fillna("Edad desconocida")
+        )
+    )
     df = m.groupby("CATEGORIA", as_index=False).size().rename(columns={"size": "TOTAL"})
-    df["ORDER"] = df["CATEGORIA"].map(
-        {v: i for i, v in enumerate(_AGE_ORDER)}
-    ).fillna(len(_AGE_ORDER))
+    df = df.assign(
+        ORDER=lambda x: x["CATEGORIA"].map(
+            {v: i for i, v in enumerate(_AGE_ORDER)}
+        ).fillna(len(_AGE_ORDER))
+    )
     return df.sort_values("ORDER")[["CATEGORIA", "TOTAL"]]
