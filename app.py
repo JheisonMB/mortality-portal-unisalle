@@ -14,5 +14,8 @@ server = app.server  # expose Flask server for gunicorn
 # Data functions use @lru_cache so aggregations compute only once.
 app.layout = build_layout
 
+# Re-assign so Render's auto-detection (gunicorn app:app) gets a callable Flask WSGI app.
+app = server
+
 if __name__ == "__main__":
-    app.run(debug=False, host="0.0.0.0", port=8050)
+    server.run(host="0.0.0.0", port=8050)
